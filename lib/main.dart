@@ -3,15 +3,12 @@ import 'package:homework9_2/globals/theme/app_theme.dart';
 import 'package:homework9_2/screens/login_page.dart';
 import 'package:homework9_2/screens/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-
-
-import 'data/classes.dart';
 import 'data/user_preferences.dart';
 
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await UserPreferences().init();
   //User? user = UserPreferences().getUserObject();
    //await UserPreferences().clear(); //если раскомментить эти строчки, то сбросятся все сохраненные данные пользователя - если надо для тестов
@@ -24,6 +21,8 @@ class RegistrationApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage("lib/assets/bg1.jpg"), context);
+    precacheImage(AssetImage("lib/assets/bg2.jpg"), context);
     return MaterialApp(
  debugShowCheckedModeBanner: false,
       title: 'Регистрация пользователя',

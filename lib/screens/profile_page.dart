@@ -3,10 +3,10 @@
 //еще должна быть кнопка "Написать", если это чужой профиль, там должен открываться чат
 //и еще кнопку "Выйти" надо добавить
 
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:homework9_2/screens/edit_profile_page.dart';
+import 'package:intl/intl.dart';
 
 import '../data/classes.dart';
 import '../data/user_preferences.dart';
@@ -104,31 +104,77 @@ class _PersonWidgetState extends State<PersonWidget> {
               ],
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: _buildTopImage(),
-              ),
+              _buildTopImage(),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildName(),
-              _buildDesc(),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfileTextFieldView("Имя", user.name),
+                if(user.city.isNotEmpty)_buildProfileTextFieldView("Город", user.city),
+                if(user.birthDate != null)_buildProfileTextFieldView("Дата рождения", user.birthDate != null?DateFormat('dd.MM.yyyy').format(user.birthDate!):''),
+                if(user.aboutSelf.isNotEmpty)_buildProfileTextFieldView("О себе", user.aboutSelf),
+              ],
+            ),
           )
         ],
       );
 
+  Row _buildProfileTextFieldView(String fieldTitle, String fieldValue) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                fieldTitle,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xff03ecd4),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    fieldValue,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey[850]),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  //другой способ через передачу функции
+/*
   Widget _buildName() {
     return Column(
       children: [
-        const Text(
+        Text(
           'Имя',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: Theme.of(context).textTheme.bodySmall,
+          //style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(
           height: 10,
@@ -138,14 +184,22 @@ class _PersonWidgetState extends State<PersonWidget> {
     );
   }
 
-  Widget _buildTopImage() => SizedBox(
-    width: 200,
-    child: user.buildPhotoImage(),
-  );
-
   Widget _buildDesc() => Text(
         user.aboutSelf,
         softWrap: true,
         style: const TextStyle(fontSize: 16),
+      );
+
+  Row _buildProfileRow(Widget field) {
+    return Row(
+      children: [
+        Expanded(child: field),
+      ],
+    );
+  }*/
+
+  Widget _buildTopImage() => SizedBox(
+        width: 200,
+        child: user.buildPhotoImage(),
       );
 }

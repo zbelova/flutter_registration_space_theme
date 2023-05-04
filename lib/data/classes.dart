@@ -40,7 +40,7 @@ class User {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Color(0xff03ecd4), width: 5),
+          border: Border.all(color: const Color(0xff03ecd4), width: 5),
           //color: Colors.lightBlueAccent
         ),
         child: ClipRRect(

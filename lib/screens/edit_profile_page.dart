@@ -4,7 +4,6 @@
 //Кнопка "Загрузить диплом психолога" не обрабатывается. По логике после загрузки и подтверждения диплома
 //модератором должно открываться дополнительное поле стаж
 
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:homework9_2/screens/profile_page.dart';
@@ -204,7 +203,7 @@ class _ProfileScreen extends State<EditProfilePage> {
   Widget buildCityField() {
     return TextFormField(
       initialValue: user!.city,
-      decoration: const InputDecoration(prefixIcon: PrefixWidget('Ваш город')),
+      decoration: const InputDecoration(prefixIcon: PrefixWidget('Город')),
       keyboardType: TextInputType.text,
       // validator: (value) {
       //   if (value!.isEmpty) {
@@ -325,7 +324,7 @@ class _ProfileScreen extends State<EditProfilePage> {
           initialValue: _approve,
           validator: (value) {
             if (value == false) {
-              return 'Необходимо предоствить согласие на обработку персональных данных';
+              return 'Необходимо предоставить согласие на обработку персональных данных';
             }
           },
         ),
@@ -347,7 +346,7 @@ class _ProfileScreen extends State<EditProfilePage> {
         SizedBox(
           height: 14,
         ),
-        //buildCityField(),
+        buildCityField(),
         SizedBox(
           height: 14,
         ),
@@ -380,7 +379,7 @@ class _ProfileScreen extends State<EditProfilePage> {
         if (value!.isEmpty) {
           return 'Введите ваш номер телефона';
         } else if (value.length != 12) {
-          return 'Неккоректная длина номера';
+          return 'Некорректная длина номера';
         }
       },
       onSaved: (value) {
@@ -392,11 +391,11 @@ class _ProfileScreen extends State<EditProfilePage> {
   Widget buildPasswordField() {
     return TextFormField(
       initialValue: user!.password,
-      decoration: const InputDecoration(prefixIcon: PrefixWidget('Ваш пароль')),
+      decoration: const InputDecoration(prefixIcon: PrefixWidget('Пароль')),
       keyboardType: TextInputType.visiblePassword,
       validator: (value) {
         if (value!.isEmpty) {
-          return "Пароль из 6 символов";
+          return "Придуймайте пароль";
         }
       },
       onSaved: (value) {

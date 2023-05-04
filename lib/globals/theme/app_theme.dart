@@ -67,7 +67,7 @@ TextTheme _spaceTextTheme(TextTheme base) => base.copyWith(
 // for widgets contents/paragraph
       bodyLarge: base.bodyLarge!.copyWith(fontFamily: "Raleway", fontSize: 20, fontWeight: FontWeight.w300, color: Colors.black),
 // for sub-widgets contents/paragraph
-      bodyMedium: base.bodyMedium!.copyWith(fontFamily: "Raleway", fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black),
+      bodyMedium: base.bodyMedium!.copyWith(fontFamily: "Raleway", fontSize: 16, fontWeight: FontWeight.w300, color: Colors.black),
     );
 
 ElevatedButtonThemeData _spaceElevatedButtonTheme(ElevatedButtonThemeData base) => ElevatedButtonThemeData(
@@ -87,29 +87,31 @@ ElevatedButtonThemeData _spaceElevatedButtonTheme(ElevatedButtonThemeData base) 
     );
 
 InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => InputDecorationTheme(
-// Label color for the input widget
       contentPadding: const EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 0),
-      //isDense: true,
-      // prefixStyle: TextStyle(
-      //   overflow: TextOverflow.visible,
-      // ),
+
       labelStyle: const TextStyle(color: Colors.black),
       filled: true,
       fillColor: Colors.white,
+      // border: const OutlineInputBorder(
+      //   borderSide: BorderSide(
+      //     width: 20,
+      //     color: Colors.white,
+      //     style: BorderStyle.solid,
+      //   ),
+      //   borderRadius: BorderRadius.all(
+      //     Radius.circular(20),
+      //   ),
+      //
+      // ),
+
       floatingLabelStyle: const TextStyle(
         color: Colors.grey,
-        // backgroundColor: Colors.white,
         fontSize: 14,
         height: 0,
-        // background: Paint()
-        //   ..strokeWidth = 16.0
-        //   ..color = Colors.white
-        //   ..style = PaintingStyle.stroke
-        //   ..strokeJoin = StrokeJoin.round,
       ),
       enabledBorder: const OutlineInputBorder(
         borderSide: BorderSide(
-          width: 20,
+          width: 1,
           color: Colors.white,
           style: BorderStyle.solid,
         ),
@@ -117,11 +119,10 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
           Radius.circular(20),
         ),
       ),
-// Define border of input form while focused on
-      focusedBorder: const OutlineInputBorder(
+      focusedBorder:const OutlineInputBorder(
         borderSide: BorderSide(
-          width: 20.0,
-          color: Colors.white,
+          width: 3,
+          color: Color(0xff00d30d),
           style: BorderStyle.solid,
         ),
         borderRadius: BorderRadius.all(
@@ -130,7 +131,7 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
       ),
       errorBorder: const OutlineInputBorder(
         borderSide: BorderSide(
-          width: 20.0,
+          width: 1,
           color: Colors.white,
           style: BorderStyle.solid,
         ),
@@ -140,15 +141,14 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
       ),
       focusedErrorBorder: const OutlineInputBorder(
         borderSide: BorderSide(
-          width: 20.0,
-          color: Colors.white,
+          width: 3,
+          color: Color(0xff00d30d),
           style: BorderStyle.solid,
         ),
         borderRadius: BorderRadius.all(
           Radius.circular(20),
         ),
       ),
-
       errorStyle: TextStyle(
           fontFamily: 'Railway',
           fontWeight: FontWeight.w600,
@@ -158,17 +158,12 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
             ..strokeWidth = 17.0
             ..color = Colors.red
             ..style = PaintingStyle.stroke
-            ..strokeJoin = StrokeJoin.round
-          //..blendMode = BlendMode.lighten,
-          ),
+            ..strokeJoin = StrokeJoin.round),
     );
 
-CheckboxThemeData _spaceCheckboxTheme(CheckboxThemeData base) => CheckboxThemeData(
-  side: BorderSide(color: Colors.white, width: 2),
-  fillColor:MaterialStateProperty.all(Colors.blue)
-);
+CheckboxThemeData _spaceCheckboxTheme(CheckboxThemeData base) => CheckboxThemeData(side: BorderSide(color: Colors.white, width: 2), fillColor: MaterialStateProperty.all(Colors.blue));
 
 AppBarTheme _spaceAppbarTheme(AppBarTheme base) => AppBarTheme(
-  backgroundColor: Colors.transparent,
-  elevation: 0,
-);
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
