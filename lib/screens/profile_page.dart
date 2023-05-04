@@ -84,33 +84,35 @@ class _PersonWidgetState extends State<PersonWidget> {
                         user = data;
                       });
                     },
-                    // onPressed: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => const EditProfilePage(),
-                    //     ),
-                    //   );
-                    //   //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => ProfileScreen()), (Route<dynamic> route) => false);
-                    // },
-                    child: Text("Редактировать"),
+                    //child: Text("Редактировать"),
+
+                    child: const Icon(Icons.edit),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   ElevatedButton(
                     onPressed: () {
                       UserPreferences().setLoggedIn(false);
                       //UserPreferences().setRememberLoggedIn(false);
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false);
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginPage()), (Route<dynamic> route) => false);
                     },
-                    child: Text("Выйти"),
+                    //child: Text("Выйти"),
+                    child: const Icon(Icons.logout),
                   ),
                 ]
               ],
             ),
           ),
-          _buildTopImage(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: _buildTopImage(),
+              ),
+            ],
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -124,11 +126,11 @@ class _PersonWidgetState extends State<PersonWidget> {
   Widget _buildName() {
     return Column(
       children: [
-        Text(
+        const Text(
           'Имя',
           style: TextStyle(fontSize: 12, color: Colors.grey),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Text(user.name)
@@ -136,14 +138,10 @@ class _PersonWidgetState extends State<PersonWidget> {
     );
   }
 
-  Widget _buildTopImage() => Card(
-      margin: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 10,
-      ),
-      elevation: 5,
-      child: ClipRRect(child: AspectRatio(aspectRatio: 1, child: user.buildPhotoImage())));
+  Widget _buildTopImage() => SizedBox(
+    width: 200,
+    child: user.buildPhotoImage(),
+  );
 
   Widget _buildDesc() => Text(
         user.aboutSelf,

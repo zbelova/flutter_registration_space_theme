@@ -272,36 +272,14 @@ class _ProfileScreen extends State<EditProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(
               width: 150,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.file(
-                    //to show image, you type like this.
-                    File(image!.path),
-                    fit: BoxFit.cover,
-                    //width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-              ),
+              child: user!.buildPhotoImage()
             ),
           ),
         ] else ...[
           if (user!.photo != 'lib/assets/default.jpg') ...[
             SizedBox(
               width: 150,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.file(
-                    File(user!.photo),
-                    fit: BoxFit.cover,
-                    width: 100,
-                    height: 100,
-                  ),
-                ),
-              ),
+              child: user!.buildPhotoImage()
             ),
           ] else ...[
             const Text(
@@ -317,7 +295,7 @@ class _ProfileScreen extends State<EditProfilePage> {
           onPressed: () {
             myAlert();
           },
-          child: const Text('Редактировать фото'),
+          child: const Text('Выбрать фото'),
         ),
         const SizedBox(
           height: 10,

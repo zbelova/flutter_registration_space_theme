@@ -68,7 +68,7 @@ class CheckboxFormField extends FormField<bool> {
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                             child: Text(
                               state.errorText ?? "",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'Railway',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
