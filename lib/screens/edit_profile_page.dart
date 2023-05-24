@@ -4,6 +4,7 @@
 //Кнопка "Загрузить диплом психолога" не обрабатывается. По логике после загрузки и подтверждения диплома
 //модератором должно открываться дополнительное поле стаж
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,9 +61,12 @@ class _ProfileScreen extends State<EditProfilePage> {
 
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: loggedIn ? const Text('Редактировать профиль') : const Text('Регистрация'),
+      //extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40),
+        child: AppBar(
+          title: loggedIn ? const Text('Редактировать профиль', style: TextStyle(fontSize: 20),) : const Text('Регистрация', style: TextStyle(fontSize: 18)),
+        ),
       ),
       body: OrientationBuilder(
         builder: (context, orientation) {
@@ -134,83 +138,6 @@ class _ProfileScreen extends State<EditProfilePage> {
                         UserPreferences().setLoggedIn(true);
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (context) => ProfilePage()),
-                          (Route<dynamic> route) => false,
-                        );
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(text),
-                          backgroundColor: color,
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'Сохранить',
-                  ))
-            ],
-          )),
-    );
-  }
-
-  Widget _buildLandscapeEditProfile(context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(
-            'lib/assets/bg2.jpg',
-          ),
-          fit: BoxFit.cover,
-        ),
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Form(
-          key: _formkey,
-          child: ListView(
-            children: [
-              buildPhotoField(),
-              buildNameField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildContactField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildEmailField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildPasswordField(),
-              if (loggedIn) buildAdditionalFields(),
-              if (!loggedIn) buildApproveField(),
-              ElevatedButton(
-                  onPressed: () {
-                    Color color = Colors.green;
-                    String text;
-                    //text = 'Необходимо заполнить поля';
-                    text = 'Данные профиля сохранены';
-                    // if (_approve == false) {
-                    //   text = 'Необходимо предоствить согласие на обработку персональных данных';
-                    // }
-                    // if (!_formkey.currentState!.validate()) {
-                    //   text = 'Необходимо заполнить поля';
-                    // } else {
-                    if (_formkey.currentState!.validate()) {
-                      //text = 'Необходимо заполнить поля';
-
-                      _formkey.currentState!.save();
-                      UserPreferences().setUserObject(user!);
-
-                      text = 'Данные профиля сохранены';
-                      color = Colors.green;
-                      if (loggedIn) {
-                        //Navigator.of(context).pop();
-                        Navigator.pop(context, user);
-                      } else {
-                        UserPreferences().setLoggedIn(true);
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
                               (Route<dynamic> route) => false,
                         );
                       }
@@ -222,14 +149,117 @@ class _ProfileScreen extends State<EditProfilePage> {
                       );
                     }
                   },
-                  child: const Text(
-                    'Сохранить',
+                  child: Text(
+                    loggedIn ? 'Сохранить' : 'Зарегистроваться',
+     style: TextStyle(fontSize: 16)
                   ))
             ],
           )),
     );
   }
 
+  Widget _buildLandscapeEditProfile(context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              'lib/assets/bg2.jpg',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        padding: constraints.maxWidth > 1000?EdgeInsets.only(left: 80, top: 20, right: 80,): EdgeInsets.only(left: 40, top: 20, right: 40,),
+        child: Scrollbar(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: ListView(
+                children: [ Form(
+                    key: _formkey,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildPhotoField(),
+
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 14,
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            children: [
+                              buildNameField(),
+                              const SizedBox(
+                                height: 14,
+                              ),
+                              buildContactField(),
+                              const SizedBox(
+                                height: 14,
+                              ),
+                              buildEmailField(),
+                              const SizedBox(
+                                height: 14,
+                              ),
+                              buildPasswordField(),
+                              if (loggedIn) buildAdditionalFields(),
+                              if (!loggedIn) buildApproveField(),
+                              ElevatedButton(
+
+                                  onPressed: () {
+                                    Color color = Colors.green;
+                                    String text;
+
+                                    text = 'Данные профиля сохранены';
+
+                                    if (_formkey.currentState!.validate()) {
+                                      _formkey.currentState!.save();
+                                      UserPreferences().setUserObject(user!);
+
+                                      text = 'Данные профиля сохранены';
+                                      color = Colors.green;
+                                      if (loggedIn) {
+                                        //Navigator.of(context).pop();
+                                        Navigator.pop(context, user);
+                                      } else {
+                                        UserPreferences().setLoggedIn(true);
+                                        Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                                              (Route<dynamic> route) => false,
+                                        );
+                                      }
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(text),
+                                          backgroundColor: color,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Text(
+                                    loggedIn ? 'Сохранить' : 'Зарегистроваться', style: TextStyle(fontSize: 16),
+                                  ))
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    )),
+                ]
+            ),
+          ),
+        ),
+      );
+    });
+  }
 
   Widget buildNameField() {
     return TextFormField(
@@ -356,24 +386,30 @@ class _ProfileScreen extends State<EditProfilePage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(width: 150, child: user!.buildPhotoImage()),
           ),
-        ] else ...[
-          if (user!.photo != 'lib/assets/default.jpg') ...[
-            SizedBox(width: 150, child: user!.buildPhotoImage()),
-          ] else ...[
-            const Text(
-              "Не выбрано",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
+        ] else
+          ...[
+            if (user!.photo != 'lib/assets/default.jpg') ...[
+              SizedBox(width: 150, child: user!.buildPhotoImage()),
+            ] else
+              ...[
+                const Text(
+                  "Не выбрано",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ],
           ],
-        ],
         const SizedBox(
           height: 10,
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            //backgroundColor: const Color(0xFF7821E3),
+            backgroundColor: const Color(0xFF2160E3),
+          ),
           onPressed: () {
-            myAlert();
+            photoAlert();
           },
-          child: const Text('Выбрать фото'),
+          child: const Text('Выбрать фото', style: TextStyle(fontSize: 16)),
         ),
         const SizedBox(
           height: 10,
@@ -395,9 +431,9 @@ class _ProfileScreen extends State<EditProfilePage> {
     // );
     return Column(
       children: [
-        const SizedBox(
-          height: 20,
-        ),
+        // const SizedBox(
+        //   height: 20,
+        // ),
         CheckboxFormField(
           title: 'Я даю согласие на обработку персональных данных',
           initialValue: _approve,
@@ -494,46 +530,50 @@ class _ProfileScreen extends State<EditProfilePage> {
   }
 
   //show popup dialog
-  void myAlert() {
+  void photoAlert() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            title: const Text('Выберите фото'),
-            content: Container(
-              height: MediaQuery.of(context).size.height / 6,
-              child: Column(
-                children: [
-                  ElevatedButton(
-                    //if user click this button, user can upload image from gallery
-                    onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.gallery);
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.image),
-                        Text('Из галереи'),
-                      ],
+          return LayoutBuilder(builder: (context, constraints) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              title: const Text('Выберите фото'),
+              content: Container(
+                height: constraints.maxHeight/3,
+                //padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      //if user click this button, user can upload image from gallery
+                      onPressed: () {
+                        Navigator.pop(context);
+                        getImage(ImageSource.gallery);
+                      },
+                      child: Row(
+                        children: const [
+                          Icon(Icons.image),
+                          Text('Из галереи'),
+                        ],
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    //if user click this button. user can upload image from camera
-                    onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.camera);
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.camera),
-                        Text('Использовать камеру'),
-                      ],
+                    ElevatedButton(
+                      //if user click this button. user can upload image from camera
+                      onPressed: () {
+                        Navigator.pop(context);
+                        getImage(ImageSource.camera);
+                      },
+                      child: Row(
+                        children: const [
+                          Icon(Icons.camera),
+                          Text('Использовать камеру'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            );
+          }
           );
         });
   }

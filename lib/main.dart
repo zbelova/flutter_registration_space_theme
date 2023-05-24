@@ -48,6 +48,7 @@ class RegistrationApp extends StatelessWidget {
       UserPreferences().setLoggedIn(true);
       return ProfilePage();
     } else {
+
       return const LoginPage();
     }
   }

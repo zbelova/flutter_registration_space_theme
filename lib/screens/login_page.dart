@@ -30,6 +30,7 @@ class _LoginPage extends State<LoginPage> {
     correctName = user?.email;
     correctPassword = user?.password;
     _remember = UserPreferences().getRememberLoggedIn();
+
   }
 
   @override
@@ -139,85 +140,90 @@ class _LoginPage extends State<LoginPage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Container(
-            padding: EdgeInsets.only(left:80, top: constraints.maxHeight/5, right:80,  ),
-            child: Form(
-                key: formKey,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Вход в приложение',
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          buildEmailField(),
-                          const SizedBox(
-                            height: 14,
-                          ),
-                          biuldPasswordField(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildRememberField(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-
-                      child: Padding(
-                        padding: EdgeInsets.only(left: constraints.maxWidth/20),
-                        child: Column(
-                          //mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 50,),
-                          //  Spacer(),
-                            SizedBox(
-                              width: 250,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  //backgroundColor: const Color(0xFF7821E3),
-                                  backgroundColor: const Color(0xFF2160E3),
-                                ),
-                                onPressed: _validateLogin,
-                                child: const Text(
-                                  'Войти',
-                                     style: TextStyle(fontSize: 20),
-                                ),
+          child: ListView(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left:80, top: constraints.maxHeight/5, right:80,  ),
+                child: Form(
+                    key: formKey,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            //mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Вход в приложение',
+                                style: constraints.maxWidth <900?Theme.of(context).textTheme.displayMedium:Theme.of(context).textTheme.displayLarge,
                               ),
-                            ),
-                            const SizedBox(height: 10.0),
-                            SizedBox(
-                              width: 250,
-                              height: 50,
-                              child: ElevatedButton(
-                                // style: ElevatedButton.styleFrom(
-                                //   backgroundColor: Color(0xFFE3003D),
-                                // ),
-                                onPressed: () async {
-                                  await Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                                  );
-                                },
-                                child: const Text('Пройти регистрацию', style: TextStyle(fontSize: 20),),
+                              const SizedBox(
+                                height: 20,
                               ),
-                            ),
-                           // Spacer()
-                          ],
+                              buildEmailField(),
+                              const SizedBox(
+                                height: 14,
+                              ),
+                              biuldPasswordField(),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              buildRememberField(),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                )),
+                        Expanded(
+
+                          child: Padding(
+                            padding: EdgeInsets.only(left: constraints.maxWidth/20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 50,),
+                              //  Spacer(),
+                                SizedBox(
+                                  width: 250,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      //backgroundColor: const Color(0xFF7821E3),
+                                      backgroundColor: const Color(0xFF2160E3),
+                                    ),
+                                    onPressed: _validateLogin,
+                                    child: const Text(
+                                      'Войти',
+                                         style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: 250,
+                                  height: 50,
+                                  child: ElevatedButton(
+                                    // style: ElevatedButton.styleFrom(
+                                    //   backgroundColor: Color(0xFFE3003D),
+                                    // ),
+                                    onPressed: () async {
+                                      await Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                                      );
+                                    },
+                                    child: const Text('Пройти регистрацию', style: TextStyle(fontSize: 18),),
+                                  ),
+                                ),
+                               // Spacer()
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ],
           ));
     });
   }
@@ -305,7 +311,7 @@ class _LoginPage extends State<LoginPage> {
       Color color = Colors.red;
       String text;
 
-      if ((name != correctName && password != correctPassword) || (correctName == '' || correctPassword == '')) {
+      if (name != correctName || password != correctPassword ) {
         text = 'Пароль или email не совпадают';
       } else {
         text = 'Идентификация пройдена';

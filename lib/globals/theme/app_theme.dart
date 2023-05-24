@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 // Instantiate new  theme data
-final ThemeData SpaceTheme = _spaceTutorialTheme();
+final ThemeData SpaceTheme = _spaceTheme();
 
 //Define Base theme for app
-ThemeData _spaceTutorialTheme() {
+ThemeData _spaceTheme() {
 // We'll just overwrite whatever's already there using ThemeData.light()
   final ThemeData base = ThemeData.light();
 
@@ -41,7 +41,7 @@ TextTheme _spaceTextTheme(TextTheme base) => base.copyWith(
         fontFamily: "Raleway",
         fontSize: 26,
         fontWeight: FontWeight.w400,
-        color: Colors.black,
+        color: Colors.white,
       ),
 // for sub-widgets heading/title
       displaySmall: base.displaySmall!.copyWith(
@@ -119,7 +119,7 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
           Radius.circular(20),
         ),
       ),
-      focusedBorder:const OutlineInputBorder(
+      focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(
           width: 3,
           color: Color(0xff00d30d),
@@ -161,9 +161,13 @@ InputDecorationTheme _spaceInputDecorationTheme(InputDecorationTheme base) => In
             ..strokeJoin = StrokeJoin.round),
     );
 
-CheckboxThemeData _spaceCheckboxTheme(CheckboxThemeData base) => CheckboxThemeData(side: BorderSide(color: Colors.white, width: 2), fillColor: MaterialStateProperty.all(Colors.blue));
+CheckboxThemeData _spaceCheckboxTheme(CheckboxThemeData base) => CheckboxThemeData(side: const BorderSide(color: Colors.white, width: 2), fillColor: MaterialStateProperty.all(Colors.blue));
 
-AppBarTheme _spaceAppbarTheme(AppBarTheme base) => AppBarTheme(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
+AppBarTheme _spaceAppbarTheme(AppBarTheme base) => const AppBarTheme(
+      // backgroundColor: Colors.transparent,
+      // elevation: 0,
+      backgroundColor: Color(0xff00b4a6),
+
+
+
     );

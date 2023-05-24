@@ -3,7 +3,7 @@
 //еще должна быть кнопка "Написать", если это чужой профиль, там должен открываться чат
 //и еще кнопку "Выйти" надо добавить
 
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../data/classes.dart';
@@ -46,8 +46,11 @@ class _PersonWidgetState extends State<PersonWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: const Text('Профиль'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(45),
+        child: AppBar(
+          title: const Text('Профиль'),
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -58,12 +61,100 @@ class _PersonWidgetState extends State<PersonWidget> {
             fit: BoxFit.cover,
           ),
         ),
-        child: _buildMainColumn(context),
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            if (orientation == Orientation.portrait) {
+              return _buildPortraitEditProfile(context);
+            } else {
+              return _buildLandscapeEditProfile(context);
+            }
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildMainColumn(BuildContext context) => ListView(
+  Widget _buildLandscapeEditProfile(BuildContext context) => CupertinoScrollbar(
+    child: LayoutBuilder (builder: (context, constraints) { return     ListView(
+      children: [
+
+
+        Padding(
+          padding: constraints.maxWidth > 1000?const EdgeInsets.only(top: 15):const EdgeInsets.only(top: 15, left: 35),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    SizedBox(height: 25,),
+                    _buildTopImage(),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: Column(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileTextFieldView("Имя", user.name),
+                      if (user.city.isNotEmpty) _buildProfileTextFieldView("Город", user.city),
+                      if (user.birthDate != null) _buildProfileTextFieldView("Дата рождения", user.birthDate != null ? DateFormat('dd.MM.yyyy').format(user.birthDate!) : ''),
+                      if (user.aboutSelf.isNotEmpty) _buildProfileTextFieldView("О себе", user.aboutSelf),
+                    ],
+                  ),
+                ),
+              ),
+
+              Expanded(
+                child: Column(children: [
+                  SizedBox(height: 22,),
+                  if (myPage) ...[
+                    ElevatedButton(
+                      onPressed: () async {
+                        final data = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EditProfilePage(),
+                          ),
+                        );
+                        setState(() {
+                          user = data;
+                        });
+                      },
+                      //child: Text("Редактировать"),
+
+                      child: const Icon(Icons.edit),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        UserPreferences().setLoggedIn(false);
+                        //UserPreferences().setRememberLoggedIn(false);
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginPage()), (Route<dynamic> route) => false);
+                      },
+                      //child: Text("Выйти"),
+                      child: const Icon(Icons.logout),
+                    ),
+                  ]
+                ],),
+              )
+
+            ],
+          ),
+        ),
+      ],
+    );})
+
+  );
+
+  Widget _buildPortraitEditProfile(BuildContext context) => ListView(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -118,9 +209,9 @@ class _PersonWidgetState extends State<PersonWidget> {
               //crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildProfileTextFieldView("Имя", user.name),
-                if(user.city.isNotEmpty)_buildProfileTextFieldView("Город", user.city),
-                if(user.birthDate != null)_buildProfileTextFieldView("Дата рождения", user.birthDate != null?DateFormat('dd.MM.yyyy').format(user.birthDate!):''),
-                if(user.aboutSelf.isNotEmpty)_buildProfileTextFieldView("О себе", user.aboutSelf),
+                if (user.city.isNotEmpty) _buildProfileTextFieldView("Город", user.city),
+                if (user.birthDate != null) _buildProfileTextFieldView("Дата рождения", user.birthDate != null ? DateFormat('dd.MM.yyyy').format(user.birthDate!) : ''),
+                if (user.aboutSelf.isNotEmpty) _buildProfileTextFieldView("О себе", user.aboutSelf),
               ],
             ),
           )
