@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homework9_2/screens/profile_page.dart';
-
+import 'package:flutter_user_profile/screens/profile_page.dart';
 import '../data/classes.dart';
 import '../data/user_preferences.dart';
 import '../widgets/myWidgets.dart';

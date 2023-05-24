@@ -6,13 +6,12 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:homework9_2/screens/profile_page.dart';
-import 'package:homework9_2/widgets/myWidgets.dart';
+import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../data/classes.dart';
 import '../data/user_preferences.dart';
+import '../widgets/myWidgets.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});

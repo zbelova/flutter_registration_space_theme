@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:homework9_2/globals/theme/app_theme.dart';
-import 'package:homework9_2/screens/login_page.dart';
-import 'package:homework9_2/screens/profile_page.dart';
+import 'package:flutter_user_profile/screens/login_page.dart';
+import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/user_preferences.dart';
+import 'globals/theme/app_theme.dart';
 
 
 Future main() async {

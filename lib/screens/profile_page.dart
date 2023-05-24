@@ -5,11 +5,10 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:homework9_2/screens/edit_profile_page.dart';
 import 'package:intl/intl.dart';
-
 import '../data/classes.dart';
 import '../data/user_preferences.dart';
+import 'edit_profile_page.dart';
 import 'login_page.dart';
 
 class ProfilePage extends StatelessWidget {
