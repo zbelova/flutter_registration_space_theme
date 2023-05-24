@@ -4,7 +4,6 @@
 //Кнопка "Загрузить диплом психолога" не обрабатывается. По логике после загрузки и подтверждения диплома
 //модератором должно открываться дополнительное поле стаж
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:image_picker/image_picker.dart';
@@ -42,11 +41,11 @@ class _ProfileScreen extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return buildUserProfile(context);
+    return _buildEditProfile(context);
     //return buildScaffold(context);
   }
 
-  Widget buildUserProfile(BuildContext context) {
+  Widget _buildEditProfile(BuildContext context) {
     if (loggedIn) {
       return WillPopScope(
           onWillPop: () async {
@@ -65,84 +64,172 @@ class _ProfileScreen extends State<EditProfilePage> {
       appBar: AppBar(
         title: loggedIn ? const Text('Редактировать профиль') : const Text('Регистрация'),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'lib/assets/bg2.jpg',
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Form(
-            key: _formkey,
-            child: ListView(
-              children: [
-                buildPhotoField(),
-                buildNameField(),
-                const SizedBox(
-                  height: 14,
-                ),
-                buildContactField(),
-                const SizedBox(
-                  height: 14,
-                ),
-                buildEmailField(),
-                const SizedBox(
-                  height: 14,
-                ),
-                buildPasswordField(),
-                if (loggedIn) buildAdditionalFields(),
-                if (!loggedIn) buildApproveField(),
-                ElevatedButton(
-                    onPressed: () {
-                      Color color = Colors.green;
-                      String text;
-                      //text = 'Необходимо заполнить поля';
-                      text = 'Данные профиля сохранены';
-                      // if (_approve == false) {
-                      //   text = 'Необходимо предоствить согласие на обработку персональных данных';
-                      // }
-                      // if (!_formkey.currentState!.validate()) {
-                      //   text = 'Необходимо заполнить поля';
-                      // } else {
-                      if (_formkey.currentState!.validate()) {
-                        //text = 'Необходимо заполнить поля';
-
-                        _formkey.currentState!.save();
-                        UserPreferences().setUserObject(user!);
-
-                        text = 'Данные профиля сохранены';
-                        color = Colors.green;
-                        if (loggedIn) {
-                          //Navigator.of(context).pop();
-                          Navigator.pop(context, user);
-                        } else {
-                          UserPreferences().setLoggedIn(true);
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => ProfilePage()),
-                            (Route<dynamic> route) => false,
-                          );
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(text),
-                            backgroundColor: color,
-                          ),
-                        );
-                      }
-
-
-                    },
-                    child: const Text(
-                      'Сохранить',
-                    ))
-              ],
-            )),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return _buildPortraitEditProfile(context);
+          } else {
+            return _buildLandscapeEditProfile(context);
+          }
+        },
       ),
     );
   }
+
+  Widget _buildPortraitEditProfile(context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'lib/assets/bg2.jpg',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Form(
+          key: _formkey,
+          child: ListView(
+            children: [
+              buildPhotoField(),
+              buildNameField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildContactField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildEmailField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildPasswordField(),
+              if (loggedIn) buildAdditionalFields(),
+              if (!loggedIn) buildApproveField(),
+              ElevatedButton(
+                  onPressed: () {
+                    Color color = Colors.green;
+                    String text;
+                    //text = 'Необходимо заполнить поля';
+                    text = 'Данные профиля сохранены';
+                    // if (_approve == false) {
+                    //   text = 'Необходимо предоствить согласие на обработку персональных данных';
+                    // }
+                    // if (!_formkey.currentState!.validate()) {
+                    //   text = 'Необходимо заполнить поля';
+                    // } else {
+                    if (_formkey.currentState!.validate()) {
+                      //text = 'Необходимо заполнить поля';
+
+                      _formkey.currentState!.save();
+                      UserPreferences().setUserObject(user!);
+
+                      text = 'Данные профиля сохранены';
+                      color = Colors.green;
+                      if (loggedIn) {
+                        //Navigator.of(context).pop();
+                        Navigator.pop(context, user);
+                      } else {
+                        UserPreferences().setLoggedIn(true);
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(text),
+                          backgroundColor: color,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Сохранить',
+                  ))
+            ],
+          )),
+    );
+  }
+
+  Widget _buildLandscapeEditProfile(context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'lib/assets/bg2.jpg',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Form(
+          key: _formkey,
+          child: ListView(
+            children: [
+              buildPhotoField(),
+              buildNameField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildContactField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildEmailField(),
+              const SizedBox(
+                height: 14,
+              ),
+              buildPasswordField(),
+              if (loggedIn) buildAdditionalFields(),
+              if (!loggedIn) buildApproveField(),
+              ElevatedButton(
+                  onPressed: () {
+                    Color color = Colors.green;
+                    String text;
+                    //text = 'Необходимо заполнить поля';
+                    text = 'Данные профиля сохранены';
+                    // if (_approve == false) {
+                    //   text = 'Необходимо предоствить согласие на обработку персональных данных';
+                    // }
+                    // if (!_formkey.currentState!.validate()) {
+                    //   text = 'Необходимо заполнить поля';
+                    // } else {
+                    if (_formkey.currentState!.validate()) {
+                      //text = 'Необходимо заполнить поля';
+
+                      _formkey.currentState!.save();
+                      UserPreferences().setUserObject(user!);
+
+                      text = 'Данные профиля сохранены';
+                      color = Colors.green;
+                      if (loggedIn) {
+                        //Navigator.of(context).pop();
+                        Navigator.pop(context, user);
+                      } else {
+                        UserPreferences().setLoggedIn(true);
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                              (Route<dynamic> route) => false,
+                        );
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(text),
+                          backgroundColor: color,
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Сохранить',
+                  ))
+            ],
+          )),
+    );
+  }
+
 
   Widget buildNameField() {
     return TextFormField(
@@ -222,16 +309,15 @@ class _ProfileScreen extends State<EditProfilePage> {
         initialValue: user!.aboutSelf,
         decoration: InputDecoration(
           prefixIcon: Column(
-
-            children: [ Padding(
-              padding: EdgeInsets.only(left: 20, right: 5, top:15),
-              child: Text(
-                "О себе:".toUpperCase(),
-                style: TextStyle(color: Colors.grey[700]),
-                //style: TextStyle(color: Colors.blue[700]),
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 5, top: 15),
+                child: Text(
+                  "О себе:".toUpperCase(),
+                  style: TextStyle(color: Colors.grey[700]),
+                  //style: TextStyle(color: Colors.blue[700]),
+                ),
               ),
-            ),
-
             ],
           ),
         ),
@@ -268,17 +354,11 @@ class _ProfileScreen extends State<EditProfilePage> {
         if (image != null) ...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SizedBox(
-              width: 150,
-              child: user!.buildPhotoImage()
-            ),
+            child: SizedBox(width: 150, child: user!.buildPhotoImage()),
           ),
         ] else ...[
           if (user!.photo != 'lib/assets/default.jpg') ...[
-            SizedBox(
-              width: 150,
-              child: user!.buildPhotoImage()
-            ),
+            SizedBox(width: 150, child: user!.buildPhotoImage()),
           ] else ...[
             const Text(
               "Не выбрано",

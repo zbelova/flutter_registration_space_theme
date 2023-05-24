@@ -35,9 +35,103 @@ class _LoginPage extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue,
-        body: Container(
-          decoration: BoxDecoration(
+      backgroundColor: Colors.blue,
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return _buildPortraitLoginPage(context);
+          } else {
+            return _buildLandscapeLoginPage(context);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildPortraitLoginPage(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(
+            'lib/assets/bg1.jpg',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Вход в приложение',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      buildEmailField(),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      biuldPasswordField(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      buildRememberField(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 250,
+                        height: 40,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            //backgroundColor: const Color(0xFF7821E3),
+                            backgroundColor: const Color(0xFF2160E3),
+                          ),
+                          onPressed: _validateLogin,
+                          child: const Text(
+                            'Войти',
+                              style: TextStyle(fontSize: 16)
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      SizedBox(
+                        width: 250,
+                        height: 40,
+                        child: ElevatedButton(
+                          // style: ElevatedButton.styleFrom(
+                          //   backgroundColor: Color(0xFFE3003D),
+                          // ),
+                          onPressed: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                            );
+                          },
+                          child: const Text('Пройти регистрацию', style: TextStyle(fontSize: 16)),
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLandscapeLoginPage(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
                 'lib/assets/bg1.jpg',
@@ -45,31 +139,18 @@ class _LoginPage extends State<LoginPage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Form(
-                      key: formKey,
+          child: Container(
+            padding: EdgeInsets.only(left:80, top: constraints.maxHeight/5, right:80,  ),
+            child: Form(
+                key: formKey,
+                child: Row(
+                  children: [
+                    Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        //mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             'Вход в приложение',
-                            // style: TextStyle(
-                            //   fontSize: 24,
-                            //   color: Colors.white,
-                            //   fontWeight: FontWeight.bold,
-                            //   shadows: [
-                            //     Shadow(
-                            //       color: Colors.black.withOpacity(0.7),
-                            //       offset: const Offset(1, 1),
-                            //       blurRadius: 3,
-                            //     ),
-                            //   ],
-                            // ),
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                           const SizedBox(
@@ -80,54 +161,70 @@ class _LoginPage extends State<LoginPage> {
                             height: 14,
                           ),
                           biuldPasswordField(),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           buildRememberField(),
                           const SizedBox(
                             height: 20,
                           ),
-                          SizedBox(
-                            width: 200,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                //backgroundColor: const Color(0xFF7821E3),
-                                backgroundColor: const Color(0xFF2160E3),
-                              ),
-                              onPressed: _validateLogin,
-                              child: const Text(
-                                'Войти',
-                                //style: TextStyle(fontFamily: 'Raleway'),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          SizedBox(
-                            width: 200,
-                            child: ElevatedButton(
-                              // style: ElevatedButton.styleFrom(
-                              //   backgroundColor: Color(0xFFE3003D),
-                              // ),
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                                );
-                              },
-                              child: const Text('Пройти регистрацию'),
-                            ),
-                          )
                         ],
-                      )),
-                ),
-              ),
-            ],
-          ),
-        ));
+                      ),
+                    ),
+                    Expanded(
+
+                      child: Padding(
+                        padding: EdgeInsets.only(left: constraints.maxWidth/20),
+                        child: Column(
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 50,),
+                          //  Spacer(),
+                            SizedBox(
+                              width: 250,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  //backgroundColor: const Color(0xFF7821E3),
+                                  backgroundColor: const Color(0xFF2160E3),
+                                ),
+                                onPressed: _validateLogin,
+                                child: const Text(
+                                  'Войти',
+                                     style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10.0),
+                            SizedBox(
+                              width: 250,
+                              height: 50,
+                              child: ElevatedButton(
+                                // style: ElevatedButton.styleFrom(
+                                //   backgroundColor: Color(0xFFE3003D),
+                                // ),
+                                onPressed: () async {
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                                  );
+                                },
+                                child: const Text('Пройти регистрацию', style: TextStyle(fontSize: 20),),
+                              ),
+                            ),
+                           // Spacer()
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+          ));
+    });
   }
 
   Widget buildEmailField() {
     return TextFormField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           //labelText: prefix,
           //prefixText: prefix + ':   ',
           prefixIcon: PrefixWidget('Email'),
@@ -153,11 +250,9 @@ class _LoginPage extends State<LoginPage> {
     // );
   }
 
-
-
   Widget biuldPasswordField() {
     return TextFormField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           //labelText: prefix,
           //prefixText: prefix + ':   ',
           prefixIcon: PrefixWidget('Пароль'),
@@ -192,23 +287,12 @@ class _LoginPage extends State<LoginPage> {
                     blurRadius: 1,
                   ),
                 ],
+                fontSize: 18,
               ),
-              // style: TextStyle(
-              //   color: Colors.white,
-              //   // RfontWeight: FontWeight.bold,
-              //   fontFamily: "Proxima Nova Rg Regular",
-              //   fontSize: 16,
-              //   shadows: [
-              //     Shadow(
-              //       color: Colors.black.withOpacity(0.7),
-              //       offset: const Offset(2, 2),
-              //       blurRadius: 4,
-              //     ),
-              //   ],
-              // ),
+
             ),
             value: _remember,
-            contentPadding: EdgeInsets.all(0),
+            contentPadding: const EdgeInsets.all(0),
             onChanged: (bool? value) {
               setState(() => _remember = value!);
             }),
@@ -245,28 +329,25 @@ class _LoginPage extends State<LoginPage> {
   }
 }
 
-
-  // TextFormField buildTextFormField(String prefix, String? Function(String?) validatorFunc) {
-  //   return TextFormField(
-  //       decoration: InputDecoration(
-  //         //labelText: prefix,
-  //         //prefixText: prefix + ':   ',
-  //           prefixIcon: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               Padding(
-  //                 padding: EdgeInsets.only(left: 10),
-  //                 child: Text(
-  //                   "$prefix:".toUpperCase(),
-  //                 ),
-  //               ),
-  //             ],
-  //           )),
-  //
-  //       //style: Theme.of(context).textTheme.titleMedium,
-  //       keyboardType: TextInputType.emailAddress,
-  //       validator: validatorFunc,
-  //       onChanged: (name) => setState(() => this.name = name));
-  // }
-
-
+// TextFormField buildTextFormField(String prefix, String? Function(String?) validatorFunc) {
+//   return TextFormField(
+//       decoration: InputDecoration(
+//         //labelText: prefix,
+//         //prefixText: prefix + ':   ',
+//           prefixIcon: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Padding(
+//                 padding: EdgeInsets.only(left: 10),
+//                 child: Text(
+//                   "$prefix:".toUpperCase(),
+//                 ),
+//               ),
+//             ],
+//           )),
+//
+//       //style: Theme.of(context).textTheme.titleMedium,
+//       keyboardType: TextInputType.emailAddress,
+//       validator: validatorFunc,
+//       onChanged: (name) => setState(() => this.name = name));
+// }
