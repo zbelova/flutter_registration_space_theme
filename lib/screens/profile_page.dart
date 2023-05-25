@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_user_profile/data/user_table.dart';
 import 'package:intl/intl.dart';
-import '../data/classes.dart';
 import '../data/user_preferences.dart';
 import '../main.dart';
 import 'edit_profile_page.dart';
@@ -35,10 +34,10 @@ class PersonWidget extends StatefulWidget {
 
 class _PersonWidgetState extends State<PersonWidget> {
   _PersonWidgetState();
-
-  Future<UserTable?> getUserTable(int id) {
-    return objectbox.getById(id);
-  }
+int id =1;
+  // Future<UserTable?> getUserTable(int id) {
+  //   return objectbox.getById(id);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +79,7 @@ class _PersonWidgetState extends State<PersonWidget> {
               child: CircularProgressIndicator(),
             );
           },
-          future: getUserTable(2),
+          future: objectbox.getById(id),
         ),
       ),
     );

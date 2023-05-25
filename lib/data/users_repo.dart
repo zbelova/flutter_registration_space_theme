@@ -55,11 +55,12 @@ class ObjectBox {
   // Future<UserTable> getById(int id) async {
   //   Query<UserTable> query = _userTableBox.query(UserTable_.id.equals(id)).build();
   //   List<UserTable> objects = query.find();
-  //   UserTable userById = objects.first;
+  //   UserTablhe userById = objects.first;
   //   query.close();
   //   return userById;
   // }
   Future<UserTable?> getById(int id) {
+    //id = 1;
     return _userTableBox.getAsync(id);
   }
 

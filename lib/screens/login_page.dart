@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_user_profile/data/user_table.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
-import '../data/classes.dart';
+import '../data/user_class_from_prefs.dart';
 import '../data/user_preferences.dart';
 import '../data/users_repo.dart';
 import '../widgets/myWidgets.dart';

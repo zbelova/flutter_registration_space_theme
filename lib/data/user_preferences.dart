@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'classes.dart';
+import 'user_class_from_prefs.dart';
 
 class UserPreferences {
   //создание переменной для сохранения preferences

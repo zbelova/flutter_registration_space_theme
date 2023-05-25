@@ -1,43 +1,41 @@
-//страница редактирования профиля. Во время регистрации показывается меньше полей.
-//При открытии через "Редактировать" на странице профиля, открывается больше полей.
-//Данные сохраняются в юзер префс через объект User, запакованный в json.
-//Кнопка "Загрузить диплом психолога" не обрабатывается. По логике после загрузки и подтверждения диплома
-//модератором должно открываться дополнительное поле стаж
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import '../data/classes.dart';
+
 import '../data/user_preferences.dart';
+import '../data/user_table.dart';
+import '../main.dart';
 import '../widgets/myWidgets.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
   @override
-  State<EditProfilePage> createState() => _ProfileScreen();
+  State<EditProfilePage> createState() => EditProfileScreen();
 }
 
-class _ProfileScreen extends State<EditProfilePage> {
+class EditProfileScreen extends State<EditProfilePage> {
   TextEditingController dateInput = TextEditingController();
   final bool loggedIn = UserPreferences().getLoggedIn();
-  User? user;
+
+  //User? user;
   var text;
   var color;
   XFile? image;
   var _approve = false;
   final ImagePicker picker = ImagePicker();
 
+  // Future<UserTable?> getUserTable(int id) {
+  //   return objectbox.getById(id);
+  // }
+  int id =1;
+
   @override
   void initState() {
-    user = loggedIn ? UserPreferences().getUserObject() : User(name: '');
+    //user = loggedIn ? UserPreferences().getUserObject() : User(name: '');
     //user = UserPreferences().getUserObject(); //юзер берется из юзер префс
     super.initState();
-    if (loggedIn) {
-      dateInput.text = user!.birthDate != null ? DateFormat('dd.MM.yyyy').format(user!.birthDate!) : '';
-    }
   }
 
   @override
@@ -48,12 +46,27 @@ class _ProfileScreen extends State<EditProfilePage> {
 
   Widget _buildEditProfile(BuildContext context) {
     if (loggedIn) {
-      return WillPopScope(
-          onWillPop: () async {
-            Navigator.pop(context, user);
-            return false;
-          },
-          child: buildScaffold(context));
+      return FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              // Extracting data from snapshot object
+              final user = snapshot.data;
+              return WillPopScope(
+                  onWillPop: () async {
+                    Navigator.pop(context, user);
+                    return false;
+                  },
+                  child: buildScaffold(context));
+            }
+          }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        future: objectbox.getById(id),
+      );
     } else {
       return buildScaffold(context);
     }
@@ -65,22 +78,42 @@ class _ProfileScreen extends State<EditProfilePage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(40),
         child: AppBar(
-          title: loggedIn ? const Text('Редактировать профиль', style: TextStyle(fontSize: 20),) : const Text('Регистрация', style: TextStyle(fontSize: 18)),
+          title: loggedIn
+              ? const Text(
+                  'Редактировать профиль',
+                  style: TextStyle(fontSize: 20),
+                )
+              : const Text('Регистрация', style: TextStyle(fontSize: 18)),
         ),
       ),
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.portrait) {
-            return _buildPortraitEditProfile(context);
-          } else {
-            return _buildLandscapeEditProfile(context);
+      body: FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              // Extracting data from snapshot object
+              final user = snapshot.data;
+              return OrientationBuilder(
+                builder: (context, orientation) {
+                  if (orientation == Orientation.portrait) {
+                    return _buildPortraitEditProfile(context, user!);
+                  } else {
+                    return _buildLandscapeEditProfile(context, user!);
+                  }
+                },
+              );
+            }
           }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
+        future: objectbox.getById(id),
       ),
     );
   }
 
-  Widget _buildPortraitEditProfile(context) {
+  Widget _buildPortraitEditProfile(context, UserTable user) {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -95,70 +128,16 @@ class _ProfileScreen extends State<EditProfilePage> {
           key: _formkey,
           child: ListView(
             children: [
-              buildPhotoField(),
-              buildNameField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildContactField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildEmailField(),
-              const SizedBox(
-                height: 14,
-              ),
-              buildPasswordField(),
-              if (loggedIn) buildAdditionalFields(),
-              if (!loggedIn) buildApproveField(),
-              ElevatedButton(
-                  onPressed: () {
-                    Color color = Colors.green;
-                    String text;
-                    //text = 'Необходимо заполнить поля';
-                    text = 'Данные профиля сохранены';
-                    // if (_approve == false) {
-                    //   text = 'Необходимо предоствить согласие на обработку персональных данных';
-                    // }
-                    // if (!_formkey.currentState!.validate()) {
-                    //   text = 'Необходимо заполнить поля';
-                    // } else {
-                    if (_formkey.currentState!.validate()) {
-                      //text = 'Необходимо заполнить поля';
-
-                      _formkey.currentState!.save();
-                      UserPreferences().setUserObject(user!);
-
-                      text = 'Данные профиля сохранены';
-                      color = Colors.green;
-                      if (loggedIn) {
-                        //Navigator.of(context).pop();
-                        Navigator.pop(context, user);
-                      } else {
-                        UserPreferences().setLoggedIn(true);
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
-                              (Route<dynamic> route) => false,
-                        );
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(text),
-                          backgroundColor: color,
-                        ),
-                      );
-                    }
-                  },
-                  child: Text(
-                    loggedIn ? 'Сохранить' : 'Зарегистроваться',
-     style: TextStyle(fontSize: 16)
-                  ))
+              buildPhotoField(user),
+              Container(
+                child: _buildTextFieldsColumn(user, context),
+              )
             ],
           )),
     );
   }
 
-  Widget _buildLandscapeEditProfile(context) {
+  Widget _buildLandscapeEditProfile(context, UserTable user) {
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
         decoration: const BoxDecoration(
@@ -169,115 +148,127 @@ class _ProfileScreen extends State<EditProfilePage> {
             fit: BoxFit.cover,
           ),
         ),
-        padding: constraints.maxWidth > 1000?EdgeInsets.only(left: 80, top: 20, right: 80,): EdgeInsets.only(left: 40, top: 20, right: 40,),
+        padding: constraints.maxWidth > 1000
+            ? EdgeInsets.only(
+                left: 80,
+                top: 20,
+                right: 80,
+              )
+            : EdgeInsets.only(
+                left: 40,
+                top: 20,
+                right: 40,
+              ),
         child: Scrollbar(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: ListView(
-                children: [ Form(
-                    key: _formkey,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              buildPhotoField(),
-
-                            ],
-                          ),
+            child: ListView(children: [
+              Form(
+                  key: _formkey,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildPhotoField(user),
+                          ],
                         ),
-                        const SizedBox(
-                          width: 14,
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            children: [
-                              buildNameField(),
-                              const SizedBox(
-                                height: 14,
-                              ),
-                              buildContactField(),
-                              const SizedBox(
-                                height: 14,
-                              ),
-                              buildEmailField(),
-                              const SizedBox(
-                                height: 14,
-                              ),
-                              buildPasswordField(),
-                              if (loggedIn) buildAdditionalFields(),
-                              if (!loggedIn) buildApproveField(),
-                              ElevatedButton(
-
-                                  onPressed: () {
-                                    Color color = Colors.green;
-                                    String text;
-
-                                    text = 'Данные профиля сохранены';
-
-                                    if (_formkey.currentState!.validate()) {
-                                      _formkey.currentState!.save();
-                                      UserPreferences().setUserObject(user!);
-
-                                      text = 'Данные профиля сохранены';
-                                      color = Colors.green;
-                                      if (loggedIn) {
-                                        //Navigator.of(context).pop();
-                                        Navigator.pop(context, user);
-                                      } else {
-                                        UserPreferences().setLoggedIn(true);
-                                        Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(builder: (context) => ProfilePage()),
-                                              (Route<dynamic> route) => false,
-                                        );
-                                      }
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(text),
-                                          backgroundColor: color,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Text(
-                                    loggedIn ? 'Сохранить' : 'Зарегистроваться', style: TextStyle(fontSize: 16),
-                                  ))
-                            ],
-                          ),
-                        ),
-
-                      ],
-                    )),
-                ]
-            ),
+                      ),
+                      const SizedBox(
+                        width: 14,
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: _buildTextFieldsColumn(user, context),
+                      ),
+                    ],
+                  )),
+            ]),
           ),
         ),
       );
     });
   }
 
-  Widget buildNameField() {
+  Column _buildTextFieldsColumn(UserTable user, BuildContext context) {
+    return Column(
+      children: [
+        buildNameField(user),
+        const SizedBox(
+          height: 14,
+        ),
+        buildContactField(user),
+        const SizedBox(
+          height: 14,
+        ),
+        buildEmailField(user),
+        const SizedBox(
+          height: 14,
+        ),
+        buildPasswordField(user),
+        if (loggedIn) buildAdditionalFields(user),
+        if (!loggedIn) buildApproveField(),
+        ElevatedButton(
+            onPressed: () {
+              Color color = Colors.green;
+              String text;
+
+              text = 'Данные профиля сохранены';
+
+              if (_formkey.currentState!.validate()) {
+                _formkey.currentState!.save();
+                //UserPreferences().setUserObject(user!);
+
+                text = 'Данные профиля сохранены';
+                color = Colors.green;
+                if (loggedIn) {
+                  //Navigator.of(context).pop();
+                  Navigator.pop(context, user);
+                } else {
+                  UserPreferences().setLoggedIn(true);
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => ProfilePage()),
+                    (Route<dynamic> route) => false,
+                  );
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(text),
+                    backgroundColor: color,
+                  ),
+                );
+              }
+            },
+            child: Text(
+              loggedIn ? 'Сохранить' : 'Зарегистроваться',
+              style: TextStyle(fontSize: 16),
+            ))
+      ],
+    );
+  }
+
+  Widget buildNameField(UserTable user) {
     return TextFormField(
-      initialValue: user!.name,
+      initialValue: user.name,
       decoration: const InputDecoration(prefixIcon: PrefixWidget('Имя')),
       keyboardType: TextInputType.text,
       validator: (value) {
         if (value!.isEmpty) {
           return 'Введитие имя';
         }
+        return null;
       },
       onSaved: (value) {
-        user!.name = value!;
+        user.name = value!;
       },
     );
   }
 
-  Widget buildDateTimeField() {
+  Widget buildDateTimeField(UserTable user) {
     return TextFormField(
       // validator: (value) {
       //   if (value!.isEmpty) {
@@ -303,7 +294,7 @@ class _ProfileScreen extends State<EditProfilePage> {
         );
 
         if (pickedDate != null) {
-          user!.birthDate = pickedDate;
+          user.birthDate = pickedDate;
           //pickedDate output format => 2021-03-10 00:00:00.000
           //String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
           String formattedDate = DateFormat('dd.MM.yyyy').format(pickedDate);
@@ -316,9 +307,9 @@ class _ProfileScreen extends State<EditProfilePage> {
     );
   }
 
-  Widget buildCityField() {
+  Widget buildCityField(UserTable user) {
     return TextFormField(
-      initialValue: user!.city,
+      initialValue: user.city,
       decoration: const InputDecoration(prefixIcon: PrefixWidget('Город')),
       keyboardType: TextInputType.text,
       // validator: (value) {
@@ -327,16 +318,16 @@ class _ProfileScreen extends State<EditProfilePage> {
       //   }
       // },
       onSaved: (value) {
-        user!.city = value!;
+        user.city = value!;
       },
     );
   }
 
-  Widget buildAboutField() {
+  Widget buildAboutField(UserTable user) {
     return SizedBox(
       height: 80,
       child: TextFormField(
-        initialValue: user!.aboutSelf,
+        initialValue: user.aboutSelf,
         decoration: InputDecoration(
           prefixIcon: Column(
             children: [
@@ -361,7 +352,7 @@ class _ProfileScreen extends State<EditProfilePage> {
         //   }
         // },
         onSaved: (value) {
-          user!.aboutSelf = value!;
+          user.aboutSelf = value!;
         },
       ),
     );
@@ -378,26 +369,24 @@ class _ProfileScreen extends State<EditProfilePage> {
   //     },
   //   );
   // }
-  Widget buildPhotoField() {
+  Widget buildPhotoField(UserTable user) {
     return Column(
       children: [
         if (image != null) ...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SizedBox(width: 150, child: user!.buildPhotoImage()),
+            child: SizedBox(width: 150, child: user.buildPhotoImage()),
           ),
-        ] else
-          ...[
-            if (user!.photo != 'lib/assets/default.jpg') ...[
-              SizedBox(width: 150, child: user!.buildPhotoImage()),
-            ] else
-              ...[
-                const Text(
-                  "Не выбрано",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ],
+        ] else ...[
+          if (user.photo != 'lib/assets/default.jpg') ...[
+            SizedBox(width: 150, child: user.buildPhotoImage()),
+          ] else ...[
+            const Text(
+              "Не выбрано",
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
           ],
+        ],
         const SizedBox(
           height: 10,
         ),
@@ -407,7 +396,7 @@ class _ProfileScreen extends State<EditProfilePage> {
             backgroundColor: const Color(0xFF2160E3),
           ),
           onPressed: () {
-            photoAlert();
+            photoAlert(user);
           },
           child: const Text('Выбрать фото', style: TextStyle(fontSize: 16)),
         ),
@@ -450,22 +439,22 @@ class _ProfileScreen extends State<EditProfilePage> {
     );
   }
 
-  Widget buildAdditionalFields() {
+  Widget buildAdditionalFields(UserTable user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           height: 14,
         ),
-        buildDateTimeField(),
+        buildDateTimeField(user),
         SizedBox(
           height: 14,
         ),
-        buildCityField(),
+        buildCityField(user),
         SizedBox(
           height: 14,
         ),
-        buildAboutField(),
+        buildAboutField(user),
         const SizedBox(
           height: 14,
         ),
@@ -473,21 +462,21 @@ class _ProfileScreen extends State<EditProfilePage> {
     );
   }
 
-  Widget buildEmailField() {
+  Widget buildEmailField(UserTable user) {
     return TextFormField(
-      initialValue: user!.email,
+      initialValue: user.email,
       decoration: const InputDecoration(prefixIcon: PrefixWidget('Email')),
       keyboardType: TextInputType.emailAddress,
       validator: validateEmail,
       onSaved: (value) {
-        user!.email = value!;
+        user.email = value!;
       },
     );
   }
 
-  Widget buildContactField() {
+  Widget buildContactField(UserTable user) {
     return TextFormField(
-      initialValue: user!.phone.isEmpty ? "+7" : user!.phone,
+      initialValue: user.phone.isEmpty ? "+7" : user.phone,
       decoration: const InputDecoration(prefixIcon: PrefixWidget('Телефон')),
       keyboardType: TextInputType.phone,
       validator: (value) {
@@ -498,14 +487,14 @@ class _ProfileScreen extends State<EditProfilePage> {
         }
       },
       onSaved: (value) {
-        user!.phone = value!;
+        user.phone = value!;
       },
     );
   }
 
-  Widget buildPasswordField() {
+  Widget buildPasswordField(UserTable user) {
     return TextFormField(
-      initialValue: user!.password,
+      initialValue: user.password,
       decoration: const InputDecoration(prefixIcon: PrefixWidget('Пароль')),
       keyboardType: TextInputType.visiblePassword,
       validator: (value) {
@@ -514,23 +503,23 @@ class _ProfileScreen extends State<EditProfilePage> {
         }
       },
       onSaved: (value) {
-        user!.password = value!;
+        user.password = value!;
       },
     );
   }
 
   //we can upload image from camera or from gallery based on parameter
-  Future getImage(ImageSource media) async {
+  Future getImage(ImageSource media, UserTable user) async {
     var img = await picker.pickImage(source: media);
 
     setState(() {
       image = img;
-      user!.photo = img != null ? img.path : user!.photo;
+      user.photo = img != null ? img.path : user.photo;
     });
   }
 
   //show popup dialog
-  void photoAlert() {
+  void photoAlert(UserTable user) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -539,7 +528,7 @@ class _ProfileScreen extends State<EditProfilePage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               title: const Text('Выберите фото'),
               content: Container(
-                height: constraints.maxHeight/3,
+                height: constraints.maxHeight / 3,
                 //padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
@@ -547,7 +536,7 @@ class _ProfileScreen extends State<EditProfilePage> {
                       //if user click this button, user can upload image from gallery
                       onPressed: () {
                         Navigator.pop(context);
-                        getImage(ImageSource.gallery);
+                        getImage(ImageSource.gallery, user);
                       },
                       child: Row(
                         children: const [
@@ -560,7 +549,7 @@ class _ProfileScreen extends State<EditProfilePage> {
                       //if user click this button. user can upload image from camera
                       onPressed: () {
                         Navigator.pop(context);
-                        getImage(ImageSource.camera);
+                        getImage(ImageSource.camera, user);
                       },
                       child: Row(
                         children: const [
@@ -573,8 +562,7 @@ class _ProfileScreen extends State<EditProfilePage> {
                 ),
               ),
             );
-          }
-          );
+          });
         });
   }
 
