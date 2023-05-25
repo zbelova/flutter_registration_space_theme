@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_user_profile/data/user_table.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
 import '../data/classes.dart';
 import '../data/user_preferences.dart';
+import '../data/users_repo.dart';
 import '../widgets/myWidgets.dart';
 import 'edit_profile_page.dart';
-
+import 'package:flutter_user_profile/main.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -21,16 +23,21 @@ class _LoginPage extends State<LoginPage> {
   User? user;
   bool? _remember;
 
+
+  //final _usersRepo = UsersRepo();
+  //late UserTable _user1;
+  //late UserTable _users;
+  //late var user1 = _usersRepo.getById(1);
+
   @override
   void initState() {
     super.initState();
+
     user = UserPreferences().getUserObject(); //юзер берется из юзер префс
-    // correctName = UserPreferences().getUsername();
-    // correctPassword = UserPreferences().getUserpassword();
     correctName = user?.email;
     correctPassword = user?.password;
     _remember = UserPreferences().getRememberLoggedIn();
-
+    //_usersRepo.initDB().whenComplete(() => setState(() => _users = _usersRepo.getById(1)));
   }
 
   @override

@@ -3,12 +3,15 @@ import 'package:flutter_user_profile/screens/login_page.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/user_preferences.dart';
+import 'data/users_repo.dart';
 import 'globals/theme/app_theme.dart';
+
+late ObjectBox objectbox;
 
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  objectbox = await ObjectBox.create();
   await UserPreferences().init();
   //User? user = UserPreferences().getUserObject();
   //await UserPreferences().clear(); //если раскомментить эти строчки, то сбросятся все сохраненные данные пользователя - если надо для тестов
@@ -45,6 +48,7 @@ class RegistrationApp extends StatelessWidget {
   }
 
   Widget buildHomePage() {
+    late var user1 = objectbox.getById(1);
     if (goToMainPage) {
       UserPreferences().setLoggedIn(true);
       return ProfilePage();
