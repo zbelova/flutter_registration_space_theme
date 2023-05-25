@@ -14,36 +14,27 @@ import 'edit_profile_page.dart';
 import 'login_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  User? user;
-  bool myPage = false;
-
-  ProfilePage({super.key, this.user}) {
-    myPage = user != null ? false : true;
-    user = user ?? UserPreferences().getUserObject(); //если не передан пользователь в качестве аргумента, то открывается страница текущего пользователя приложения
+  ProfilePage({super.key}) {
+    //user = user ?? UserPreferences().getUserObject(); //если не передан пользователь в качестве аргумента, то открывается страница текущего пользователя приложения
   }
 
   @override
   Widget build(BuildContext context) {
-    return PersonWidget(user: user!, myPage: myPage);
+    return PersonWidget();
   }
 }
 
 class PersonWidget extends StatefulWidget {
-  User user;
-  bool myPage;
+  //bool myPage;
 
-  PersonWidget({super.key, required this.user, required this.myPage});
+  PersonWidget({super.key});
 
   @override
-  State<PersonWidget> createState() => _PersonWidgetState(user, myPage);
+  State<PersonWidget> createState() => _PersonWidgetState();
 }
 
 class _PersonWidgetState extends State<PersonWidget> {
-  User user;
-  bool myPage;
-  //
-
-  _PersonWidgetState(this.user, this.myPage);
+  _PersonWidgetState();
 
   Future<UserTable?> getUserTable(int id) {
     return objectbox.getById(id);
@@ -136,13 +127,11 @@ class _PersonWidgetState extends State<PersonWidget> {
                         SizedBox(
                           height: 22,
                         ),
-
                         editButton(context, user),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         logoutButton(context),
-
                       ],
                     ),
                   )
@@ -153,26 +142,18 @@ class _PersonWidgetState extends State<PersonWidget> {
         );
       }));
 
-
-
-  Widget _buildPortraitProfile(
-    BuildContext context,
-    UserTable user
-  ) =>
-      ListView(
+  Widget _buildPortraitProfile(BuildContext context, UserTable user) => ListView(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-
-                  editButton(context, user),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  logoutButton(context),
-
+                editButton(context, user),
+                const SizedBox(
+                  width: 10,
+                ),
+                logoutButton(context),
               ],
             ),
           ),
@@ -199,7 +180,6 @@ class _PersonWidgetState extends State<PersonWidget> {
           )
         ],
       );
-
 
   ElevatedButton logoutButton(BuildContext context) {
     return ElevatedButton(
@@ -231,6 +211,7 @@ class _PersonWidgetState extends State<PersonWidget> {
       child: const Icon(Icons.edit),
     );
   }
+
   Row _buildProfileTextFieldView(String fieldTitle, String fieldValue) {
     return Row(
       children: [
