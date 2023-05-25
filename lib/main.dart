@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/user_preferences.dart';
 import 'globals/theme/app_theme.dart';
 
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
