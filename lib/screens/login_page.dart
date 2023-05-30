@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_user_profile/data/user_table.dart';
+import 'package:flutter_user_profile/data/user_entity.dart';
 import 'package:flutter_user_profile/screens/profile_page.dart';
-import '../data/user_class_from_prefs.dart';
+
 import '../data/user_preferences.dart';
-import '../data/users_repo.dart';
+
 import '../widgets/myWidgets.dart';
 import 'edit_profile_page.dart';
 import 'package:flutter_user_profile/main.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -16,13 +17,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  String name = '';
+  String email = '';
   String password = '';
   String? correctName;
   String? correctPassword;
-  User? user;
+  UserEntity? user;
   bool? _remember;
-
 
   //final _usersRepo = UsersRepo();
   //late UserTable _user1;
@@ -33,9 +33,9 @@ class _LoginPage extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    user = UserPreferences().getUserObject(); //юзер берется из юзер префс
-    correctName = user?.email;
-    correctPassword = user?.password;
+    // user = UserPreferences().getUserObject(); //юзер берется из юзер префс
+    // correctName = user?.email;
+    // correctPassword = user?.password;
     _remember = UserPreferences().getRememberLoggedIn();
     //_usersRepo.initDB().whenComplete(() => setState(() => _users = _usersRepo.getById(1)));
   }
@@ -105,10 +105,7 @@ class _LoginPage extends State<LoginPage> {
                             backgroundColor: const Color(0xFF2160E3),
                           ),
                           onPressed: _validateLogin,
-                          child: const Text(
-                            'Войти',
-                              style: TextStyle(fontSize: 16)
-                          ),
+                          child: const Text('Войти', style: TextStyle(fontSize: 16)),
                         ),
                       ),
                       const SizedBox(height: 10.0),
@@ -150,7 +147,11 @@ class _LoginPage extends State<LoginPage> {
           child: ListView(
             children: [
               Container(
-                padding: EdgeInsets.only(left:80, top: constraints.maxHeight/5, right:80,  ),
+                padding: EdgeInsets.only(
+                  left: 80,
+                  top: constraints.maxHeight / 5,
+                  right: 80,
+                ),
                 child: Form(
                     key: formKey,
                     child: Row(
@@ -162,7 +163,7 @@ class _LoginPage extends State<LoginPage> {
                             children: [
                               Text(
                                 'Вход в приложение',
-                                style: constraints.maxWidth <900?Theme.of(context).textTheme.displayMedium:Theme.of(context).textTheme.displayLarge,
+                                style: constraints.maxWidth < 900 ? Theme.of(context).textTheme.displayMedium : Theme.of(context).textTheme.displayLarge,
                               ),
                               const SizedBox(
                                 height: 20,
@@ -183,14 +184,15 @@ class _LoginPage extends State<LoginPage> {
                           ),
                         ),
                         Expanded(
-
                           child: Padding(
-                            padding: EdgeInsets.only(left: constraints.maxWidth/20),
+                            padding: EdgeInsets.only(left: constraints.maxWidth / 20),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(height: 50,),
-                              //  Spacer(),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                //  Spacer(),
                                 SizedBox(
                                   width: 250,
                                   height: 50,
@@ -202,7 +204,7 @@ class _LoginPage extends State<LoginPage> {
                                     onPressed: _validateLogin,
                                     child: const Text(
                                       'Войти',
-                                         style: TextStyle(fontSize: 18),
+                                      style: TextStyle(fontSize: 18),
                                     ),
                                   ),
                                 ),
@@ -219,10 +221,13 @@ class _LoginPage extends State<LoginPage> {
                                         MaterialPageRoute(builder: (context) => const EditProfilePage()),
                                       );
                                     },
-                                    child: const Text('Пройти регистрацию', style: TextStyle(fontSize: 18),),
+                                    child: const Text(
+                                      'Пройти регистрацию',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
                                   ),
                                 ),
-                               // Spacer()
+                                // Spacer()
                               ],
                             ),
                           ),
@@ -251,7 +256,7 @@ class _LoginPage extends State<LoginPage> {
           }
           return null;
         },
-        onChanged: (name) => setState(() => this.name = name));
+        onChanged: (name) => setState(() => this.email = name));
     // return buildTextFormField(
     //   'Email',
     //   (value) {
@@ -302,7 +307,6 @@ class _LoginPage extends State<LoginPage> {
                 ],
                 fontSize: 18,
               ),
-
             ),
             value: _remember,
             contentPadding: const EdgeInsets.all(0),
@@ -313,24 +317,33 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  void _validateLogin() {
+  Future<void> _loadUser(email) async {
+    user = (await objectbox.getByEmail(email));
+    setState(() {});
+  }
+
+  Future<void> _validateLogin() async {
+    Color color = Colors.red;
+    String text;
     if (formKey.currentState!.validate()) {
-      Color color = Colors.red;
-      String text;
-
-      if (name != correctName || password != correctPassword ) {
-        text = 'Пароль или email не совпадают';
+      await _loadUser(email);
+      if (user != null) {
+        if (password != user!.password) {
+          text = 'Пароль или email не совпадают';
+        } else {
+          text = 'Идентификация пройдена';
+          color = Colors.green;
+          UserPreferences().setLoggedIn(true);
+          UserPreferences().setRememberLoggedIn(_remember!);
+          UserPreferences().setLoggedInUserId(user!.id);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => ProfilePage()),
+            (Route<dynamic> route) => false,
+          );
+        }
       } else {
-        text = 'Идентификация пройдена';
-        color = Colors.green;
-        UserPreferences().setLoggedIn(true);
-        UserPreferences().setRememberLoggedIn(_remember!);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-          (Route<dynamic> route) => false,
-        );
+        text = 'Пользователь с таким email не найден';
       }
-
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

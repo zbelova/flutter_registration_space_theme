@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 //flutter packages pub run build_runner build или flutter packages pub run build_runner build --delete-conflicting-outputs (удалит конфликтующие файлы).
 
 @Entity()
-class UserTable {
+class UserEntity {
   @Id()
   int id;
   String name;
@@ -21,7 +21,7 @@ class UserTable {
   String aboutSelf;
   String photo;
 
-  UserTable({
+  UserEntity({
     this.id = 0,
     required this.name, required this.phone, required this.email, required this.password, this.city = '', this.aboutSelf = '', this.photo = 'lib/assets/default.jpg', this.birthDate
   });

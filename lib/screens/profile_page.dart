@@ -1,15 +1,13 @@
-//страница профиля пользователя
-//есть кнопка редактировать, если это "мой профиль". Изменения сохранятся в объект юзера в префс
-//еще должна быть кнопка "Написать", если это чужой профиль, там должен открываться чат
-//и еще кнопку "Выйти" надо добавить
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_user_profile/data/user_table.dart';
+import 'package:flutter_user_profile/data/user_entity.dart';
 import 'package:intl/intl.dart';
 import '../data/user_preferences.dart';
 import '../main.dart';
 import 'edit_profile_page.dart';
+
 import 'login_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -34,10 +32,15 @@ class PersonWidget extends StatefulWidget {
 
 class _PersonWidgetState extends State<PersonWidget> {
   _PersonWidgetState();
-int id =1;
-  // Future<UserTable?> getUserTable(int id) {
-  //   return objectbox.getById(id);
-  // }
+
+  int id = 0;
+
+  @override
+  void initState() {
+    id = UserPreferences().getLoggedInUserId();
+    //id = 6;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,19 +76,36 @@ int id =1;
                     }
                   },
                 );
+              } else {
+                return ListView(
+                  children: [Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("Пользователь не найден"),
+                      logoutButton(context),
+                    ],
+                  ),]
+                );
               }
             }
             return Center(
               child: CircularProgressIndicator(),
             );
           },
-          future: objectbox.getById(id),
+          future: buildById(),
         ),
       ),
     );
   }
 
-  Widget _buildLandscapeProfile(BuildContext context, UserTable user) => CupertinoScrollbar(child: LayoutBuilder(builder: (context, constraints) {
+  Future<UserEntity?> buildById() async {
+    if (id > 0)
+      return objectbox.getById(id);
+    else
+      return null;
+  }
+
+  Widget _buildLandscapeProfile(BuildContext context, UserEntity user) => CupertinoScrollbar(child: LayoutBuilder(builder: (context, constraints) {
         return ListView(
           children: [
             Padding(
@@ -141,7 +161,7 @@ int id =1;
         );
       }));
 
-  Widget _buildPortraitProfile(BuildContext context, UserTable user) => ListView(
+  Widget _buildPortraitProfile(BuildContext context, UserEntity user) => ListView(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -184,6 +204,7 @@ int id =1;
     return ElevatedButton(
       onPressed: () {
         UserPreferences().setLoggedIn(false);
+        UserPreferences().setLoggedInUserId(0);
         //UserPreferences().setRememberLoggedIn(false);
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginPage()), (Route<dynamic> route) => false);
       },
@@ -192,17 +213,18 @@ int id =1;
     );
   }
 
-  ElevatedButton editButton(BuildContext context, UserTable user) {
+  ElevatedButton editButton(BuildContext context, UserEntity user) {
     return ElevatedButton(
       onPressed: () async {
         final data = await Navigator.push(
           context,
           MaterialPageRoute(
+            //builder: (context) => const EditProfilePage(),
             builder: (context) => const EditProfilePage(),
           ),
         );
         setState(() {
-          user = data;
+          // user = data;
         });
       },
       //child: Text("Редактировать"),
@@ -281,7 +303,7 @@ int id =1;
     );
   }*/
 
-  Widget _buildTopImage(UserTable user) => SizedBox(
+  Widget _buildTopImage(UserEntity user) => SizedBox(
         width: 200,
         child: user.buildPhotoImage(),
       );
